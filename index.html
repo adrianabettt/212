@@ -306,11 +306,11 @@ footer {
 var faseIdx=0, acertos=0, erros=0, rodando=false;
 
 var fases=[
-  {item:"🍎",missao:"LEVE O ROBÔ ATÉ A MAÇÃ!",    alvo:[2,0], bug:["DIREITA","ESQUERDA","PARAR"],             solucao:["DIREITA","DIREITA","PARAR"]},
-  {item:"🚀",missao:"LEVE O ROBÔ ATÉ O FOGUETE!", alvo:[0,2], bug:["BAIXO","CIMA","PARAR"],                   solucao:["BAIXO","BAIXO","PARAR"]},
-  {item:"⭐",missao:"LEVE O ROBÔ ATÉ A ESTRELA!", alvo:[2,2], bug:["DIREITA","ESQUERDA","BAIXO","BAIXO","PARAR"], solucao:["DIREITA","DIREITA","BAIXO","BAIXO","PARAR"]},
-  {item:"🎁",missao:"LEVE O ROBÔ ATÉ O PRESENTE!",alvo:[0,3], bug:["BAIXO","BAIXO","CIMA","PARAR"],           solucao:["BAIXO","BAIXO","BAIXO","PARAR"]},
-  {item:"🐱",missao:"LEVE O ROBÔ ATÉ O GATINHO!", alvo:[3,1], bug:["DIREITA","DIREITA","ESQUERDA","BAIXO","PARAR"], solucao:["DIREITA","DIREITA","DIREITA","BAIXO","PARAR"]}
+  {item:"🍎",missao:"LEVE O ROBÔ ATÉ A MAÇÃ!",    alvo:[2,0], bug:["DIREITA","ESQUERDA","RECOLHER"],             solucao:["DIREITA","DIREITA","RECOLHER"]},
+  {item:"🚀",missao:"LEVE O ROBÔ ATÉ O FOGUETE!", alvo:[0,2], bug:["BAIXO","CIMA","RECOLHER"],                   solucao:["BAIXO","BAIXO","RECOLHER"]},
+  {item:"⭐",missao:"LEVE O ROBÔ ATÉ A ESTRELA!", alvo:[2,2], bug:["DIREITA","ESQUERDA","BAIXO","BAIXO","RECOLHER"], solucao:["DIREITA","DIREITA","BAIXO","BAIXO","RECOLHER"]},
+  {item:"🎁",missao:"LEVE O ROBÔ ATÉ O PRESENTE!",alvo:[0,3], bug:["BAIXO","BAIXO","CIMA","RECOLHER"],           solucao:["BAIXO","BAIXO","BAIXO","RECOLHER"]},
+  {item:"🐱",missao:"LEVE O ROBÔ ATÉ O GATINHO!", alvo:[3,1], bug:["DIREITA","DIREITA","ESQUERDA","BAIXO","RECOLHER"], solucao:["DIREITA","DIREITA","DIREITA","BAIXO","RECOLHER"]}
 ];
 
 function desenharFase(){
@@ -347,11 +347,11 @@ function desenharFase(){
     div.className='linha'; div.id='linha-'+i;
     div.innerHTML='<span>P'+(i+1)+'</span>'+
       '<select id="passo'+i+'">'+
-        '<option value="DIREITA"' +(cmd==='DIREITA' ?' selected':'')+'>➡️ DIREITA</option>'+
-        '<option value="ESQUERDA"'+(cmd==='ESQUERDA'?' selected':'')+'>⬅️ ESQUERDA</option>'+
-        '<option value="CIMA"'    +(cmd==='CIMA'    ?' selected':'')+'>⬆️ CIMA</option>'+
-        '<option value="BAIXO"'   +(cmd==='BAIXO'   ?' selected':'')+'>⬇️ BAIXO</option>'+
-        '<option value="PARAR"'   +(cmd==='PARAR'   ?' selected':'')+'>🛑 PARAR</option>'+
+        '<option value="DIREITA"' +(cmd==='DIREITA' ?' selected':'')+'>➡️ </option>'+
+        '<option value="ESQUERDA"'+(cmd==='ESQUERDA'?' selected':'')+'>⬅️ </option>'+
+        '<option value="CIMA"'    +(cmd==='CIMA'    ?' selected':'')+'>⬆️ </option>'+
+        '<option value="BAIXO"'   +(cmd==='BAIXO'   ?' selected':'')+'>⬇️ </option>'+
+        '<option value="RECOLHER"'   +(cmd==='RECOLHER'   ?' selected':'')+'>🛑 RECOLHER</option>'+
       '</select>';
     lista.appendChild(div);
   });
@@ -377,7 +377,7 @@ async function iniciarTeste(){
     linha.classList.add('executando');
     await delay(600);
 
-    if(cmd==='PARAR'){
+    if(cmd==='RECOLHER'){
       parouNoAlvo=(x===f.alvo[0]&&y===f.alvo[1]);
       linha.classList.remove('executando');
       break;
