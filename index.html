@@ -25,6 +25,8 @@ body {
 }
 .topo .sub { font-size: 11px; color: #999; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
+
+
 /* FOLHA — sem altura fixa, deixa o conteúdo crescer */
 .folha {
   background: white;
@@ -152,9 +154,15 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 1px;
   font-size: clamp(13px, 2.2vw, 18px);
   border: 1px solid #ffe082;
   position: relative;
+}
+.cell .alvo-item {
+  position: absolute;
+  pointer-events: none;
 }
 
 /* LEGENDA */
@@ -235,6 +243,7 @@ footer {
 </div>
 
 
+
 <div class="folha" id="tela-jogo">
 
   <div class="fase-badge"><span id="txt-fase">FASE 1 DE 5</span></div>
@@ -293,18 +302,19 @@ footer {
 <footer>EF02CO03 · 2º ANO · 1º TRIMESTRE 2026 · PROFª ADRIANA BETT TEREBINTO</footer>
 
 <script>
+var faseIdx=0, acertos=0, erros=0, rodando=false;
+
 var fases=[
-  {item:"🍎",missao:"LEVE O ROBÔ ATÉ A MAÇÃ!",    alvo:[2,0], bug:["DIREITA","ESQUERDA","RECOLHER"],             solucao:["DIREITA","DIREITA","RECOLHER"]},
-  {item:"🚀",missao:"LEVE O ROBÔ ATÉ O FOGUETE!", alvo:[0,2], bug:["BAIXO","CIMA","RECOLHER"],                   solucao:["BAIXO","BAIXO","RECOLHER"]},
-  {item:"⭐",missao:"LEVE O ROBÔ ATÉ A ESTRELA!", alvo:[2,2], bug:["DIREITA","ESQUERDA","BAIXO","BAIXO","RECOLHER"], solucao:["DIREITA","DIREITA","BAIXO","BAIXO","RECOLHER"]},
-  {item:"🎁",missao:"LEVE O ROBÔ ATÉ O PRESENTE!",alvo:[0,3], bug:["BAIXO","BAIXO","CIMA","RECOLHER"],           solucao:["BAIXO","BAIXO","BAIXO","RECOLHER"]},
-  {item:"🐱",missao:"LEVE O ROBÔ ATÉ O GATINHO!", alvo:[3,1], bug:["DIREITA","DIREITA","ESQUERDA","BAIXO","RECOLHER"], solucao:["DIREITA","DIREITA","DIREITA","BAIXO","RECOLHER"]}
+  {item:"🍎",missao:"LEVE O ROBÔ ATÉ A MAÇÃ!",    alvo:[2,0], bug:["DIREITA","ESQUERDA","PARAR"],             solucao:["DIREITA","DIREITA","PARAR"]},
+  {item:"🚀",missao:"LEVE O ROBÔ ATÉ O FOGUETE!", alvo:[0,2], bug:["BAIXO","CIMA","PARAR"],                   solucao:["BAIXO","BAIXO","PARAR"]},
+  {item:"⭐",missao:"LEVE O ROBÔ ATÉ A ESTRELA!", alvo:[2,2], bug:["DIREITA","ESQUERDA","BAIXO","BAIXO","PARAR"], solucao:["DIREITA","DIREITA","BAIXO","BAIXO","PARAR"]},
+  {item:"🎁",missao:"LEVE O ROBÔ ATÉ O PRESENTE!",alvo:[0,3], bug:["BAIXO","BAIXO","CIMA","PARAR"],           solucao:["BAIXO","BAIXO","BAIXO","PARAR"]},
+  {item:"🐱",missao:"LEVE O ROBÔ ATÉ O GATINHO!", alvo:[3,1], bug:["DIREITA","DIREITA","ESQUERDA","BAIXO","PARAR"], solucao:["DIREITA","DIREITA","DIREITA","BAIXO","PARAR"]}
 ];
 
 function desenharFase(){
   rodando=false;
   var f=fases[faseIdx];
-  document.getElementById('pl-fase').textContent=faseIdx+1;
   document.getElementById('txt-fase').textContent='FASE '+(faseIdx+1)+' DE '+fases.length;
   document.getElementById('missao-desc').textContent=f.missao;
   document.getElementById('legenda-alvo').textContent=f.item+' Alvo';
@@ -322,8 +332,16 @@ function desenharFase(){
     var cx=i%5, cy=Math.floor(i/5);
     var cell=document.createElement('div');
     cell.className='cell'; cell.id='cell-'+i;
-    if(cx===0&&cy===0) cell.innerHTML='<span id="robo">🤖</span>';
-    if(cx===f.alvo[0]&&cy===f.alvo[1]) cell.innerHTML+='<span>'+f.item+'</span>';
+    if(cx===0&&cy===0){
+      var spanRobo=document.createElement('span');
+      spanRobo.id='robo'; spanRobo.textContent='🤖';
+      cell.appendChild(spanRobo);
+    }
+    if(cx===f.alvo[0]&&cy===f.alvo[1]){
+      var spanAlvo=document.createElement('span');
+      spanAlvo.className='alvo-item'; spanAlvo.textContent=f.item;
+      cell.appendChild(spanAlvo);
+    }
     grid.appendChild(cell);
   }
 
@@ -335,11 +353,11 @@ function desenharFase(){
     div.className='linha'; div.id='linha-'+i;
     div.innerHTML='<span>P'+(i+1)+'</span>'+
       '<select id="passo'+i+'">'+
-        '<option value="DIREITA"' +(cmd==='DIREITA' ?' selected':'')+'>➡️ </option>'+
-        '<option value="ESQUERDA"'+(cmd==='ESQUERDA'?' selected':'')+'>⬅️ </option>'+
-        '<option value="CIMA"'    +(cmd==='CIMA'    ?' selected':'')+'>⬆️ </option>'+
-        '<option value="BAIXO"'   +(cmd==='BAIXO'   ?' selected':'')+'>⬇️ </option>'+
-        '<option value="RECOLHER"'   +(cmd==='RECOLHER'   ?' selected':'')+'>🛑 RECOLHER</option>'+
+        '<option value="DIREITA"' +(cmd==='DIREITA' ?' selected':'')+'>➡️ DIREITA</option>'+
+        '<option value="ESQUERDA"'+(cmd==='ESQUERDA'?' selected':'')+'>⬅️ ESQUERDA</option>'+
+        '<option value="CIMA"'    +(cmd==='CIMA'    ?' selected':'')+'>⬆️ CIMA</option>'+
+        '<option value="BAIXO"'   +(cmd==='BAIXO'   ?' selected':'')+'>⬇️ BAIXO</option>'+
+        '<option value="PARAR"'   +(cmd==='PARAR'   ?' selected':'')+'>🛑 PARAR</option>'+
       '</select>';
     lista.appendChild(div);
   });
@@ -352,12 +370,38 @@ async function iniciarTeste(){
   rodando=true;
   document.getElementById('btn-executar').disabled=true;
 
+  // limpa feedback e barra antes de rodar
+  document.getElementById('feedback-box').className='feedback-box';
+  var bErr=document.getElementById('barra-erro');
+  bErr.style.transition='none'; bErr.style.width='0%';
+
   var f=fases[faseIdx];
   var selects=document.querySelectorAll('select');
   var x=0,y=0;
-  var robo=document.getElementById('robo');
-  document.getElementById('cell-0').appendChild(robo);
   var parouNoAlvo=false;
+
+  // Função auxiliar: redesenha a grade inteira com base nas coords atuais
+  function renderGrade(rx, ry, roboEmoji){
+    var grid=document.getElementById('tabuleiro');
+    grid.innerHTML='';
+    for(var k=0;k<25;k++){
+      var ckx=k%5, cky=Math.floor(k/5);
+      var cellK=document.createElement('div');
+      cellK.className='cell'; cellK.id='cell-'+k;
+      // alvo
+      if(ckx===f.alvo[0]&&cky===f.alvo[1]){
+        var sa=document.createElement('span');
+        sa.textContent=f.item; cellK.appendChild(sa);
+      }
+      // robô
+      if(ckx===rx&&cky===ry){
+        var sr=document.createElement('span');
+        sr.id='robo'; sr.textContent=roboEmoji;
+        cellK.appendChild(sr);
+      }
+      grid.appendChild(cellK);
+    }
+  }
 
   for(var i=0;i<selects.length;i++){
     var cmd=selects[i].value;
@@ -365,7 +409,7 @@ async function iniciarTeste(){
     linha.classList.add('executando');
     await delay(600);
 
-    if(cmd==='RECOLHER'){
+    if(cmd==='PARAR'){
       parouNoAlvo=(x===f.alvo[0]&&y===f.alvo[1]);
       linha.classList.remove('executando');
       break;
@@ -375,7 +419,7 @@ async function iniciarTeste(){
     else if(cmd==='BAIXO')     y=Math.min(4,y+1);
     else if(cmd==='CIMA')      y=Math.max(0,y-1);
 
-    document.getElementById('cell-'+(y*5+x)).appendChild(robo);
+    renderGrade(x, y, '🤖');
     linha.classList.remove('executando');
   }
 
@@ -384,8 +428,7 @@ async function iniciarTeste(){
 
   if(parouNoAlvo){
     acertos++;
-    document.getElementById('pl-ac').textContent=acertos;
-    robo.textContent='🥳';
+    renderGrade(x, y, '🥳');
     document.getElementById('fb-emoji').textContent='🎉';
     document.getElementById('fb-titulo').textContent='BUG CORRIGIDO!';
     document.getElementById('fb-exp').textContent='O ROBÔ CHEGOU AO DESTINO! VOCÊ É UM DETETIVE INCRÍVEL!';
@@ -395,8 +438,7 @@ async function iniciarTeste(){
     else mostrarFim();
   } else {
     erros++;
-    document.getElementById('pl-er').textContent=erros;
-    robo.textContent='😵';
+    renderGrade(x, y, '😵');
     document.getElementById('fb-emoji').textContent='❌';
     document.getElementById('fb-titulo').textContent='O BUG CONTINUA!';
     document.getElementById('fb-exp').textContent='O ROBÔ NÃO CHEGOU AO ALVO. INDO PARA O PRÓXIMO DESAFIO...';
@@ -435,9 +477,6 @@ function mostrarFim(){
 
 function reiniciar(){
   faseIdx=0;acertos=0;erros=0;rodando=false;
-  document.getElementById('pl-ac').textContent='0';
-  document.getElementById('pl-er').textContent='0';
-  document.getElementById('pl-fase').textContent='1';
   document.getElementById('tela-fim').style.display='none';
   document.getElementById('tela-jogo').style.display='block';
   desenharFase();
