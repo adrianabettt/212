@@ -154,15 +154,25 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 1px;
   font-size: clamp(13px, 2.2vw, 18px);
   border: 1px solid #ffe082;
   position: relative;
+  overflow: hidden;
 }
+/* alvo fica como fundo absoluto, robô fica por cima */
 .cell .alvo-item {
   position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.35;
   pointer-events: none;
+}
+.cell .robo-item {
+  position: relative;
+  z-index: 2;
+  line-height: 1;
 }
 
 /* LEGENDA */
@@ -334,7 +344,7 @@ function desenharFase(){
     cell.className='cell'; cell.id='cell-'+i;
     if(cx===0&&cy===0){
       var spanRobo=document.createElement('span');
-      spanRobo.id='robo'; spanRobo.textContent='🤖';
+      spanRobo.className='robo-item'; spanRobo.id='robo'; spanRobo.textContent='🤖';
       cell.appendChild(spanRobo);
     }
     if(cx===f.alvo[0]&&cy===f.alvo[1]){
@@ -388,15 +398,16 @@ async function iniciarTeste(){
       var ckx=k%5, cky=Math.floor(k/5);
       var cellK=document.createElement('div');
       cellK.className='cell'; cellK.id='cell-'+k;
-      // alvo
+      // alvo sempre como fundo
       if(ckx===f.alvo[0]&&cky===f.alvo[1]){
         var sa=document.createElement('span');
-        sa.textContent=f.item; cellK.appendChild(sa);
+        sa.className='alvo-item'; sa.textContent=f.item;
+        cellK.appendChild(sa);
       }
-      // robô
+      // robô por cima
       if(ckx===rx&&cky===ry){
         var sr=document.createElement('span');
-        sr.id='robo'; sr.textContent=roboEmoji;
+        sr.className='robo-item'; sr.id='robo'; sr.textContent=roboEmoji;
         cellK.appendChild(sr);
       }
       grid.appendChild(cellK);
